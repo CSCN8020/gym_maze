@@ -76,18 +76,13 @@ class MazeEnv(gym.Env):
         else:
             self.maze_view.move_robot(action)
 
-        if np.array_equal(self.maze_view.robot, self.maze_view.goal):
-            reward = 1
-            done = True
-        else:
-            reward = -0.1/(self.maze_size[0]*self.maze_size[1])
-            done = False
+        reward, done = self.get_reward()
 
         self.state = self.maze_view.robot
 
         info = {}
 
-        return self.state, reward, done, info
+        return self.state, reward, done, False,  info
 
     def reset(self):
         self.maze_view.reset_robot()
@@ -105,6 +100,14 @@ class MazeEnv(gym.Env):
 
         return self.maze_view.update(mode)
 
+    def get_reward(self):
+        if np.array_equal(self.maze_view.robot, self.maze_view.goal):
+            reward = 1
+            done = True
+        else:
+            reward = -0.1/(self.maze_size[0]*self.maze_size[1])
+            done = False
+        return reward, done
 
 class MazeEnvSample5x5(MazeEnv):
 
